@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 
 const Opportunitieschema = mongoose.Schema({
   id: {type: String},
-  CompanyID: {type: Number},
+  name: {type: String},
+  // CompanyID: {type: Number},
+  CompanyID: [{ type: Schema.Types.ObjectId, ref: 'Company' }],
   GeneralSpecializationField: {type: String},
   SpecificSpecializationField: {type: String},
   OpportunityName: {type: String},

@@ -1,8 +1,4 @@
-// import { createRequire } from "module";
-// const require = createRequire(import.meta.url);
-
-// import crypto from 'crypto'
-// const fs = require('fs')
+// مو هذا الكود نرجع نكتبه
 
 import  router from 'express';
 const { User } = require("../models/user");

@@ -60,11 +60,7 @@ export const signupCompany = async (req, res) => {
     }
    };
 
-export const testCompany = async (req, res) => { 
-   // const existingUser = await user.find();
-   res.json("HELLO");
-}
-   
+
    export const resetPassword = async (req, res) => {
       const { email, newPassword } = req.body;
       try {
@@ -83,3 +79,79 @@ export const testCompany = async (req, res) => {
    };
     
 
+export const testCompany = async (req, res) => { 
+   // const existingUser = await user.find();
+   res.json("HELLO");
+}
+
+  //  Complete Profile
+  
+// // update profile
+
+export const updateProofileCV = async (req, res) => {
+   const { email, ...updateData } = req.body;
+   console.log('req.body: ',req.body)
+   Company.findOneAndUpdate(
+      { email: email }, // find user by his email
+      updateData, // user data to be updated from req.body such as Certificates, CollegeName etc...
+      { new: true }, // to return the opdated object
+      (err, doc) => { // CallBack function
+            if (err) {
+               console.log("Something went wrong when updating data!");
+               return res.status(400).json({message:'حدث خطأ من الخادم'});
+            }if (!doc) {
+               return res.status(404).json({ message: "User not found" });
+            }
+               console.log("User document  updated! :", doc);
+               res.status(200).json({message:'تم التحديث بنجاح'});
+         }
+   );
+};
+// // delete profile
+
+export const deleteAccount = async (req, res) => {
+   try {
+
+      const result = await Company.deleteOne(Company._id);
+      return res.status(200).json({message:"تم حذف الحساب بنجاح"});
+
+      } catch (error) {
+      res.status(400) . send({ success: false,msg: error.message });
+      };
+
+
+};
+
+
+
+//   View Company Profile
+export const ViewProfile = async (req, res) => { 
+}
+
+//   View Student Page
+export const ViewStudentPage = async (req, res) => { 
+}
+
+
+export const AddOpportunities = async (req, res) => { 
+   const { CompanyID, GeneralSpecializationField, SpecificSpecializationField, OpportunityName, TrainingType,
+      City, CustomizedTrainingPlans, TrainingDuration, Semester, startAndEndDates, WorkingDays,
+      WorkingHours, TrainingHours, TrainingPlan, NumberOfTrainees, TrainingBonus, Description, Duties, Benefits } = req.body;
+
+  try {  
+    const result = await Opportunities({CompanyID, GeneralSpecializationField, SpecificSpecializationField, OpportunityName, TrainingType,
+      City, CustomizedTrainingPlans, TrainingDuration, Semester, startAndEndDates, WorkingDays,
+      WorkingHours, TrainingHours, TrainingPlan, NumberOfTrainees, TrainingBonus, Description, Duties, Benefits });
+    const token = jwt.sign({email: result.email, id:result._id},secret,{expiresIn:"1h"});//app=env file
+    await Opportunities.save();
+    res.status(200).json({result, token, message:"New Opportunity is added"});
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+
+//   Select Students
+export const SelectStudents = async (req, res) => { 
+}

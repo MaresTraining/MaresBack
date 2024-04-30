@@ -4,6 +4,8 @@ import user from '../models/user.js';
 
 const secret = 'app';
 
+// // Signin
+
 export const signin = async (req, res) => { 
    //من الفرونت ناخذ
    const { email,password } = req.body;
@@ -30,6 +32,7 @@ export const signin = async (req, res) => {
       res.status(500).json({message:'حدث خطأ ما!'});
    } 
 }
+// // Signup
 
 export const signup = async (req, res) => { 
    const {firstname, lastname, email, password, confirmPassword} = req.body;
@@ -59,10 +62,7 @@ export const signup = async (req, res) => {
     }
    };
 
-export const test = async (req, res) => { 
-   // const existingUser = await user.find();
-   res.json("HELLO");
-}
+// // ResetPassword
 
    export const resetPassword = async (req, res) => {
       const { email, newPassword } = req.body;
@@ -81,106 +81,92 @@ export const test = async (req, res) => {
       }
    };
 
-//   Discription: {type: String},//1
-//   CV: {type:Object},//2
-//   Certificates: {type: Object},//3
-//   CollegeName: {type:String},//4
-//   GraduationDate: {type:Date},//6
-//   Major: {type:String},
-
-//    export const CreateCV = async (req, res) => {
-//       const { Discription, cv, Certificates, CollegeName, Major, GraduationDate} = req.body;
-//       const existingUser = await user.create({
-//          Discription, 
-//          cv,
-//          Certificates, 
-//          CollegeName, 
-//          Major, 
-//          GraduationDate,
-//          Language
-//       })
-//       if (existingUser) {
-//         res.status(200).json({
-//          Discription: user.Discription, 
-//          cv: user.cv,
-//          Certificates:user.Certificates , 
-//          CollegeName: user.CollegeName, 
-//          Major:user.Major, 
-//          GraduationDate: user.GraduationDate,
-//          Language: user.Language,
-//          token: generateToken(user._id),
-//         });
-//       } else {
-//         res.status(400);
-//         throw new Error("User not found");
-//       }
-//       const result = await user.create({Discription, cv, Certificates, CollegeName, Major, GraduationDate});
-//        const token = jwt.sign({email: result.email, id:result._id},secret,{expiresIn:"1h"});
-//     };
-//    //  firstname
-//    //  lastname
-//    //  PhoneNumber
-//    //  DateofBirth
-//    //  Address
-//     export const updateProfile = async (req, res) => {
-//       const {firstname, lastname,  PhoneNumber, DateofBirth, Address} = req.body;
-//       // console.log(req.body);
-//       // const existingUser = await user.findOne({ email });
-//        console.log(req.body);
-//      if (user) {
-//       user.firstname = req.body.firstname ;
-//       user.lastname = req.body.lastname; 
-//       user.PhoneNumber = req.body.PhoneNumber ;
-//       user.DateofBirth = req.body.DateofBirth ;
-//       user.Address = req.body.Address; 
-   
-//       const updateUserProfile = await user.create();
-//       res.json({
-//          firstname: updateProfile.firstname, 
-//          lastname: updateProfile.lastname,
-//          PhoneNumber:updateProfile.PhoneNumber , 
-//          DateofBirth: updateProfile.DateofBirth, 
-//          Address:updateProfile.Address, 
-//          token: jwt.updateProfile({firstname: result.firstname,lastname: result.lastname,PhoneNumber: result.PhoneNumber,DateofBirth: result.DateofBirth,Address: result.DateofBirth, id:result._id},secret,{expiresIn:"1h"}),//app=env file
-
-//          // token: generateToken(updateUserProfile._id),
-//       });
-//     } else {
-//       res.status(400);
-//       throw new Error("User Not Found");
-//     }
-//    };
-
+//  //  Complete Profile
+  
 // // update profile
-// export const updateCV = async (req, res) => {
-//    // console.log(req.body);
-//    const existingUser = await user.findOne({ email });
-//     console.log(req.body);
-//   if (existingUser) {
-//    user.Discription = req.body.Discription ;
-//    user.cv = req.body.cv; 
-//    user.Certificates = req.body.Certificates ;
-//    user.CollegeName = req.body.CollegeName ;
-//    user.Major = req.body.Major; 
-//    user.GraduationDate = req.body.GraduationDate ;
-//    user.Language = req.body.Language ;
 
-//    const updateUserCV = await user.save();
-//    res.json({
-//       Discription: updateCV.Discription, 
-//       cv: updateCV.cv,
-//       Certificates:updateCV.Certificates , 
-//       CollegeName: updateCV.CreateProfile, 
-//       Major:updateCV.Major, 
-//       GraduationDate: updateCV.GraduationDate,
-//       Language: updateCV.Language,
-//      token: updateCV(updateUserCV._id),
-//    });
-//  } else {
-//    res.status(400);
-//    throw new Error("User Not Found");
-//  }
-// };
+export const updateProofileCV = async (req, res) => {
+   const { email, ...updateData } = req.body;
+   // console.log('req.body: ',req.body)
+   user.findOneAndUpdate(
+      { email: email }, // find user by his email
+      updateData, // user data to be updated from req.body such as Certificates, CollegeName etc...
+      { new: true }, // to return the opdated object
+      (err, doc) => { // CallBack function
+            if (err) {
+               console.log("Something went wrong when updating data!");
+               return res.status(400).json({message:'حدث خطأ من الخادم'});
+            }if (!doc) {
+               return res.status(404).json({ message: "User not found" });
+            }
+               console.log("User document  updated! :", doc);
+               res.status(200).json({message:'تم التحديث بنجاح'});
+         }
+   );
+};
+// // delete profile
 
+export const deleteAccount = async (req, res) => {
+   try {
+
+      const result = await user.deleteOne(user._id);
+      return res.status(200).json({message:"تم حذف الحساب بنجاح"});
+
+      } catch (error) {
+      res.status(400) . send({ success: false,msg: error.message });
+      };
+
+
+};
+
+
+
+
+//   View Student Profile
+export const ViewProfile = async (req, res) => { 
+
+
+};
+
+//   View Company Page
+export const ViewCompanyPage = async (req, res) => { 
+
+};
+
+//   Filter The Opportunities
+export const FilterTheOpp = async (req, res) => { 
+
+}
+
+//   Search For The Opportunity
+export const SearchForTheOpp = async (req, res) => { 
+   const { query } = req.query;
+
+   try {
+     // Perform search based on the query
+     const result = await Item.find({ name: { $regex: query, $options: 'i' } }); // Case-insensitive search
  
-    
+     res.json(result);
+   } catch (error) {
+     console.error(error);
+     res.status(500).json({ error: 'An error occurred while searching.' });
+   }
+}
+
+
+//   Registration in the opportunity
+export const RegistrationInTheOppo = async (req, res) => { 
+}
+
+//   Discover Location
+export const DiscoverLocation = async (req, res) => { 
+};
+
+//   View Request
+export const ViewRequest = async (req, res) => { 
+};
+
+export const test = async (req, res) => { 
+   // const existingUser = await user.find();
+   res.json("HELLO");
+};
